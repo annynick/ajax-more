@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>加载更多</title>
+  <style>
+    ul{
+      list-style: none;
+    }
+    ul,li{
+      margin:0;
+      padding:0;
+    }
+    ul li{
+      border:1px solid #eee;
+      padding:10px;
+      margin:10px 0;
+    }
+    .btn{
+      width:80px;
+      height:40px;
+      line-height: 40px;
+      display: block;
+      border: 1px solid #e27272;
+      border-radius: 3px;
+      text-align: center;
+      text-decoration: none;
+      color: #e27272;
+      margin: 0 auto;
+    }
+    .btn:hover{
+      background: #e27272;
+      color:#fff;
+    }
+  </style>
+</head>
+<body>
+  <ul id="ct"></ul>
+  <a id="load-more" class="btn" href="javascript:void(0)">加载更多</a> 
+  <script>
+    var btn = document.querySelector('#load-more')
+    var ct = document.querySelector('#ct')
+    var pageIndex = 0
+    var isDataArrive = true
+
+    btn.addEventListener('click',function(){
+      var xhr = new XMLHttpRequest()
+      if(!isDataArrive){
+        return
+    }
+      xhr.onreadystatechange=function(){
+      
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200 || xhr.status === 304) {
+            var results = JSON.parse(xhr.responseText)
+            console.log(results)
+            var fragment = document.createDocumentFragment()
+            for (var i = 0; i < results.length; i++) {
+              var node = document.createElement('li')
+              node.innerText = results[i]
+              fragment.appendChild(node)
+            }
+            ct.appendChild(fragment)
+            pageIndex += 5
+          }else{
+            console.log('出错了')
+          }
+          isDataArrive = true
+        }
+      }
+      xhr.open('get','/loadMore?index='+pageIndex+'&length=5',true)
+      xhr.send()
+      isDataArrive = false
+    })
+  </script>
+
+  <!--<script>
+    var btn = document.querySelector('.query-area button')
+    var input = document.querySelector('.query-area input')
+    
+
+    btn.addEventListener('click', function(){
+       var xhr = new XMLHttpRequest()
+       xhr.onreadystatechange = function(){
+         if(xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 304)){
+          var friends = JSON.parse(xhr.responseText)
+          render(friends)
+         }
+       }
+
+      xhr.open('get', '/getFriends?username=' + input.value, true)
+      xhr.send()
+    })
+
+
+
+
+    function render(friends){
+      var detailCt = document.querySelector('.detail-area ul')
+      detailCt.innerHTML = '';
+      var ct = document.createDocumentFragment()
+      for(var i = 0; i < friends.length; i++){
+        var node = document.createElement('li')
+        node.innerText = friends[i]
+        ct.appendChild(node)
+      }
+      detailCt.appendChild(ct)
+    }
+  </script>-->
+</body>
+</html>
